@@ -1,6 +1,0 @@
-foreman-installer \
---foreman-proxy-dhcp-interface=eth1 \
---foreman-proxy-dhcp-range="10.55.55.100 10.55.55.200"
-
-
-Hammer Cli - output v CSV :-(

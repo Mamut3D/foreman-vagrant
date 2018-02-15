@@ -9,16 +9,26 @@ Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
-
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://vagrantcloud.com/search.
-   config.vm.provider "virtualbox" do |vb|
-    vb.customize ["modifyvm", :id, "--memory", "2048", "--cpus", "2"]
-  end
-  config.vm.box = "centos/7"
-  config.vm.hostname = "fm.local"
-  config.vm.network "forwarded_port", guest: 443, host: 443
-  config.vm.network "private_network", ip: "10.55.55.2"
-#    virtualbox__intnet: true
+  config.vm.box = 'bento/centos-7.4'
+  config.vm.provider("virtualbox") { |v| v.linked_clone = true }
   config.vm.provision :shell, path: "bootstrap.sh"
+  config.vm.provision "puppet"
+  # Puppet-master
+  config.vm.define "pm" do |cfg|
+    cfg.vm.provider("virtualbox") { |v| v.customize ["modifyvm", :id, "--memory", "4096", "--cpus", "2"] }
+    cfg.vm.hostname = "pm.local"
+    cfg.vm.network "private_network", ip: "10.55.55.3"
+    #cfg.vm.shell.inline = "puppet module install puppetlabs/apache"
+    cfg.vm.provision(:puppet) { |p| p.manifest_file = "pm-setup.pp" }
+  end
+
+  # Foreman-machine
+  config.vm.define "fm", primary: true do |cfg|
+    cfg.vm.provider("virtualbox") { |v| v.customize ["modifyvm", :id, "--memory", "2048", "--cpus", "2"] }
+    cfg.vm.hostname = "fm.local"
+    cfg.vm.network "forwarded_port", guest: 443, host: 443
+    cfg.vm.network "private_network", ip: "10.55.55.2"
+    config.vm.provision :shell, path: "fm/install.sh"
+    config.vm.provision :shell, path: "fm/config.sh"
+  end
 end
