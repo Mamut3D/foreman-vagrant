@@ -36,6 +36,9 @@ do
   hammer os set-default-template --id $OS_ID --config-template-id $TEMPLATE_ID
 done
 
+# Create Domain
+hammer domain create --name "$DOMAIN" --dns fm.local
+
 # Create Subnet
 hammer subnet create --name "$SUBNET_NAME" \
                      --network 10.55.55.0 \
