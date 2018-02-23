@@ -18,7 +18,8 @@ Vagrant.configure("2") do |config|
     cfg.vm.provider("virtualbox") { |v| v.customize ["modifyvm", :id, "--memory", "4096", "--cpus", "2"] }
     cfg.vm.hostname = "pm.local"
     cfg.vm.network "private_network", ip: "10.55.55.3"
-    #cfg.vm.shell.inline = "puppet module install puppetlabs/apache"
+    cfg.vm.provision "shell",
+      inline: "/opt/puppetlabs/puppet/bin/puppet module install puppetlabs-inifile"
     cfg.vm.provision(:puppet) { |p| p.manifest_file = "pm-setup.pp" }
   end
 
