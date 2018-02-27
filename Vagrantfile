@@ -30,6 +30,7 @@ Vagrant.configure("2") do |config|
     cfg.vm.network "private_network", ip: "10.55.55.2"
     cfg.vm.provision :shell, path: "fm/install.sh"
     cfg.vm.provision :shell, path: "fm/config.sh"
+    cfg.vm.provision :shell, path: "fm/nat-dns.sh"    
     cfg.vm.post_up_message = "Foreman is accesible at https://10.55.55.2/users/login \nGet login with command: vagrant ssh fm --command 'sudo cat /root/.hammer/cli.modules.d/foreman.yml'"
   end
 end
