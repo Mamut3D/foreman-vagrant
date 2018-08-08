@@ -9,19 +9,8 @@ Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
-  config.vm.box = 'bento/centos-7.4'
+  config.vm.box = 'bento/centos-7.5'
   config.vm.provider("virtualbox") { |v| v.linked_clone = true }
-  config.vm.provision :shell, path: "bootstrap.sh"
-  config.vm.provision "puppet"
-  # Puppet-master
-  config.vm.define "pm" do |cfg|
-    cfg.vm.provider("virtualbox") { |v| v.customize ["modifyvm", :id, "--memory", "4096", "--cpus", "2"] }
-    cfg.vm.hostname = "pm.local"
-    cfg.vm.network "private_network", ip: "10.55.55.3"
-    cfg.vm.provision "shell",
-      inline: "/opt/puppetlabs/puppet/bin/puppet module install puppetlabs-inifile"
-    cfg.vm.provision(:puppet) { |p| p.manifest_file = "pm-setup.pp" }
-  end
 
   # Foreman-machine
   config.vm.define "fm", primary: true do |cfg|
@@ -29,8 +18,8 @@ Vagrant.configure("2") do |config|
     cfg.vm.hostname = "fm.local"
     cfg.vm.network "private_network", ip: "10.55.55.2"
     cfg.vm.provision :shell, path: "fm/install.sh"
-    cfg.vm.provision :shell, path: "fm/config.sh"
-    cfg.vm.provision :shell, path: "fm/nat-dns.sh"    
+    #cfg.vm.provision :shell, path: "fm/config.sh"
+    #cfg.vm.provision :shell, path: "fm/nat-dns.sh"
     cfg.vm.post_up_message = "Foreman is accesible at https://10.55.55.2/users/login \nGet login with command: vagrant ssh fm --command 'sudo cat /root/.hammer/cli.modules.d/foreman.yml'"
   end
 end
